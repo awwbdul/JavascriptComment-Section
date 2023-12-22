@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <style>
+        .container {
+            width: 30%;
+            box-sizing: border-box;
+            padding-bottom: 3%;
+            border: 1px solid #c1bbbb;
+            border-radius: 10px;
+            margin-left: 31%;
+        }
+
+        .head-comment {
+            background-color: lightgray;
+        }
+
+        .comment-section {
+            margin: 30px;
+        }
+
+        input.input-comments {
+            border: 1px solid #c1bbbb;
+            border-radius: 10px;
+            padding-top: 7px;
+            width: 90%;
+            padding-bottom: 50px;
+            font-size: 26px;
+        }
+
+        .head-comment {
+            font-size: 24px;
+            margin-bottom: 7px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: -1px;
+        }
+
+        button {
+            width: 19%;
+            background-color: #5c93ff;
+            border-style: none;
+            border-radius: 5px;
+            font-size: 18px;
+            float: right;
+            margin-right: 27px;
+            margin-bottom: 12px;
+            margin-top: 6px;
+            cursor: pointer;
+        }
+
+        .line-spacing {
+            padding: 20px;
+        }
+
+        .displayed-text {
+            width: 70%;
+            margin-left: 31px;
+            font-size: 32px;
+            text-align: center;
+            border-radius: 6px;
+        }
+
+        .dateTime {
+            font-size: 12px;
+        }
+
+        .delete-btn {
+            display: none;
+            margin-right: -59px;
+            width: 23%;
+            font-size: 17px;
+            background-color: red;
+        }
+
+        .displayed-text:hover .delete-btn {
+            display: block;
+        }
+
+        #searchInput {
+            width: 76%;
+            padding: 2%;
+            border-radius: 6px;
+            border: 1px solid grey;
+        }
+
+        .search-bar {
+            margin-left: 15%;
+            margin-top: -6%;
+            margin-bottom: 7%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container-content">
+            <div class="head-comment">
+                <h2>
+                    Comments
+                </h2>
+            </div>
+            <div class="comment-section">
+
+                <input type="text" class="input-comments" placeholder="Post Comments" id="inputComments">
+                <div class="btn-comment">
+                    <Button onclick="myFunction()">Post</Button>
+
+                </div>
+
+            </div>
+            <div class="line-spacing">
+                <hr>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search comments" oninput="searchComments()">
+            </div>
+            <div class="displayed-text" id="displayedText">
+
+            </div>
+
+        </div>
+    </div>
+    <script>
+
+        var storedInput = JSON.parse(localStorage.getItem('comments')) || [];
+        function myFunction() {
+            var commentInput = document.getElementById("inputComments").value;
+            if (storedInput.length > 10) {
+                alert("Comment limit exceeds");
+                return;
+            }
+            storedInput.push(commentInput);
+            localStorage.setItem('comments', JSON.stringify(storedInput));
+            displayText();
+            document.getElementById("inputComments").value = "";
+        }
+        document.getElementById("inputComments").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                myFunction();
+            }
+        });
+        function deleteComment(index) {
+            storedInput.splice(index, 1);
+            localStorage.setItem('comments', JSON.stringify(storedInput));
+            displayText();
+        }
+
+        function displayText(filteredComments) {
+            var addedText = '';
+            for (var i = 0; i < storedInput.length; i++) {
+                var currentDate = new Date();
+                addedText += storedInput[i] + '<br><i class="fas fa-user"></i> User ' +
+                    '<button onclick= "deleteComment(' + i + ')" class="delete-btn" id="delete-btn">Delete</button>' +
+                    '<br><span class="dateTime">' + currentDate.toLocaleString() + '</span><br><hr>';
+            }
+            document.getElementById("displayedText").innerHTML = addedText;
+        }
+        function searchComments() {
+            var searchInput = document.getElementById("searchInput").value.toLowerCase();
+            var filteredComments = storedInput.filter(function (comment) {
+                return comment.toLowerCase().includes(searchInput);
+            });
+            displayText(filteredComments);
+        }
+
+    </script>
+</body>
+
+</html>
